@@ -1,29 +1,52 @@
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { invoke } from '@tauri-apps/api/core';
 
 export default function CardCrafter() {
+  const [result, setResult] = useState('');
+  const [prompt, setPrompt] = useState('');
 
-  function createCard(formData) {
-    console.log(formData.get('title'));
-    console.log(formData.get('content'));
+  async function promptAi() {
+    const result = await invoke('prompt_ai', { prompt: prompt });
+    setResult(result);
+    setPrompt('');
+  }
+
+  function submitOnEnterKey(event) {
+    if (event.key === 'Enter') {
+      promptAi();
+    }
+  }
+
+  function updatePrompt(e) {
+    console.log(e.target.value);
+    setPrompt(e.target.value);
   }
 
   return (
     <Wrapper>
       <h1>Create Your Review Card</h1>
-      <CardForm action={createCard}>
-        <InputWrapper>
-          <Label>Title</Label>
-          <TitleInput name="title" />
-        </InputWrapper>
+      <CardForm action={promptAi}>
+        <Result>
+          {result ? result : ''}
+        </Result>
         <ContentWrapper>
-          <Label>Card Content</Label>
-          <CardContent name="content"/>
+          <Label focus>Prompt</Label>
+          <Prompt name="prompt"
+            value={prompt}
+            onChange={updatePrompt}
+            placeHolder="My review card is about"
+            onKeyDown={submitOnEnterKey}
+          />
         </ContentWrapper>
-        <SubmitButton type="submit">Create</SubmitButton>
       </CardForm>
     </Wrapper>
   )
 }
+
+const Result = styled.div`
+  width: 100%;
+`;
 
 const Wrapper = styled.div`
   width: 75%;
@@ -43,17 +66,7 @@ const CardForm = styled.form`
   gap: 16px;
 `;
 
-const InputWrapper = styled.div`
-  display: flex;
-  gap: 8px;
-  width: 50%;
-`
-
 const Label = styled.label`
-`;
-
-const TitleInput = styled.input`
-  width: 100%; 
 `;
 
 const ContentWrapper = styled.div`
@@ -65,9 +78,9 @@ const ContentWrapper = styled.div`
   gap: 8px;
 `;
 
-const CardContent = styled.textarea`
+const Prompt = styled.textarea`
   width: 100%;
-  height: 344px;
+  height: 100px;
 `;
 
 const SubmitButton = styled.button`
