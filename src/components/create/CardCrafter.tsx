@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
+j
+import { marked } from 'marked';
+
+import { Questions } from './Questions';
 
 export default function CardCrafter() {
   const [result, setResult] = useState('');
   const [prompt, setPrompt] = useState('');
+  const [topic, setTopic] = useState('');
+  const [questions, setQuestions] = useState('');
 
   async function promptAi() {
-    const result = await invoke('prompt_ai', { prompt: prompt });
-    setResult(result);
-    setPrompt('');
+    const [ result, questions ] = await invoke('prompt_ai', { topic: topic });
+    setResult(marked(result));
+    setQuestions(questions);
   }
 
   function submitOnEnterKey(event) {
@@ -18,9 +24,9 @@ export default function CardCrafter() {
     }
   }
 
-  function updatePrompt(e) {
-    console.log(e.target.value);
-    setPrompt(e.target.value);
+=======
+  function updatePrompt(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setTopic(e.target.value);
   }
 
   return (
@@ -30,6 +36,7 @@ export default function CardCrafter() {
         <Result>
           {result ? result : ''}
         </Result>
+        {questions ? <Questions questions={questions} /> : ''}
         <ContentWrapper>
           <Label focus>Prompt</Label>
           <Prompt name="prompt"
