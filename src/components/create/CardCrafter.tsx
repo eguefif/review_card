@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
-j
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
-import { Questions } from './Questions';
+import Questions from './Questions';
 
 export default function CardCrafter() {
   const [result, setResult] = useState('');
@@ -14,7 +14,13 @@ export default function CardCrafter() {
 
   async function promptAi() {
     const [ result, questions ] = await invoke('prompt_ai', { topic: topic });
-    setResult(marked(result));
+    const safe_html = DOMPurify.sanitize(marked(result));
+    setResult(safe_html);
+
+    //const questions_with_id = questions.map((questions, index) => {
+    //  const options_with_id = questions.options.map((option, index) => ({ id: index, answer: option }));
+    //  return { id: index, question: questions.question, options: questions_with_id };
+    //});
     setQuestions(questions);
   }
 
@@ -24,7 +30,6 @@ export default function CardCrafter() {
     }
   }
 
-=======
   function updatePrompt(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setTopic(e.target.value);
   }
@@ -34,7 +39,7 @@ export default function CardCrafter() {
       <h1>Create Your Review Card</h1>
       <CardForm action={promptAi}>
         <Result>
-          {result ? result : ''}
+          {result ? <div dangerouslySetInnerHTML={{ __html: result }} /> : ''}
         </Result>
         {questions ? <Questions questions={questions} /> : ''}
         <ContentWrapper>

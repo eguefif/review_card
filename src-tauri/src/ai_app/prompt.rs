@@ -29,8 +29,8 @@ pub async fn prompt_ai(topic: String) -> (String, Vec<Question>) {
     let mocked_questions: Vec<Question> = vec![
         Question::new("What's France's capital City?".into(), 
             vec!["Paris".into(), "Berlin".into(), "Madrid".into()]),
-        Question::new("What's France's capital City?".into(), 
-            vec!["Paris".into(), "Berlin".into(), "Madrid".into()]),
+        Question::new("What is the weather".into(), 
+            vec!["Cloudy".into(), "Rainny".into(), "Sunny".into()]),
     ];
 
     let questions = mocked_questions;

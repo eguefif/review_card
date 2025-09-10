@@ -1,41 +1,34 @@
 import styled from '@emotion/styled';
+import Question from './Question.tsx';
+
+interface Option {
+  id: number,
+  answer: string,
+}
 
 interface Question {
-    question: string,
-    options: string[],
+  //id: number,
+  question: string,
+  //options: Option[],
+  options: string[],
 }
+
 export default function Questions(questions) {
+  let content = questions.questions.map((question) => {
+      console.log(question);
+      return (<Question 
+          question={question.question}
+          options={question.options}
+          key={question.question}
+      >
+      </Question>);
+  }
+  );
 
-    let content = questions.map((question) => { 
-    <Question 
-        question={question.question}
-        options={question.options}
-            >
-    </Question>;
-    });
-
-    return (
-        {content}
-    );
+  return (
+      {content}
+  );
 }
-
-function Question(question, options) {
-
-    let options_component = options.map((option) => <Option>{option}</Option>);
-    return (
-    <QuestionWrapper>
-            <h3>{question}</h3>
-            <ul>
-            { options_component }
-            </ul>
-    </QuestionWrapper>
-
-    );
-}
-
-const QuestionWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-`;
 
 const Option = styled.li``
+
