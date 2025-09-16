@@ -1,26 +1,19 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
 
-import Questions from './Questions';
+import Card from './Card';
+import Prompt from './Prompt';
 
 export default function CardCrafter() {
-  const [result, setResult] = useState('');
+  const [content, setContent] = useState('');
   const [prompt, setPrompt] = useState('');
   const [topic, setTopic] = useState('');
   const [questions, setQuestions] = useState('');
 
   async function promptAi() {
     const [ result, questions ] = await invoke('prompt_ai', { topic: topic });
-    const safe_html = DOMPurify.sanitize(marked(result));
-    setResult(safe_html);
-
-    //const questions_with_id = questions.map((questions, index) => {
-    //  const options_with_id = questions.options.map((option, index) => ({ id: index, answer: option }));
-    //  return { id: index, question: questions.question, options: questions_with_id };
-    //});
+    setContent(result);
     setQuestions(questions);
   }
 
@@ -37,28 +30,27 @@ export default function CardCrafter() {
   return (
     <Wrapper>
       <h1>Create Your Review Card</h1>
-      <CardForm action={promptAi}>
-        <Result>
-          {result ? <div dangerouslySetInnerHTML={{ __html: result }} /> : ''}
-        </Result>
-        {questions ? <Questions questions={questions} /> : ''}
-        <ContentWrapper>
-          <Label focus>Prompt</Label>
-          <Prompt name="prompt"
-            value={prompt}
-            onChange={updatePrompt}
-            placeHolder="My review card is about"
-            onKeyDown={submitOnEnterKey}
+
+      <ContentWrapper>
+        <PromptWrapper>
+          <Prompt 
+            submit={submitOnEnterKey} 
+            setPrompt={updatePrompt} 
+            prompt={prompt} 
           />
-        </ContentWrapper>
-      </CardForm>
+        </PromptWrapper>
+
+        <CardWrapper>
+          <Card 
+            content={content} 
+            setContent={setContent}
+            questions={questions} 
+          />
+        </CardWrapper>
+      </ContentWrapper>
     </Wrapper>
   )
 }
-
-const Result = styled.div`
-  width: 100%;
-`;
 
 const Wrapper = styled.div`
   width: 75%;
@@ -69,31 +61,19 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const CardForm = styled.form`
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  gap: 16px;
-`;
-
-const Label = styled.label`
-`;
-
 const ContentWrapper = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  gap: 8px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: start;
+  gap: 64px;
 `;
 
-const Prompt = styled.textarea`
-  width: 100%;
-  height: 100px;
+const PromptWrapper = styled.div`
+  flex: 1;
 `;
 
-const SubmitButton = styled.button`
-`
+const CardWrapper = styled.div`
+  flex: 3;
+`;
