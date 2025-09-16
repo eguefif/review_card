@@ -5,7 +5,8 @@ export default function Prompt({ submit, setPrompt, prompt}) {
   return (
   <>
       <Label focus>Card Content</Label>
-      <StyledTextArea name="prompt"
+      <StyledTextArea 
+        name="prompt"
         value={prompt}
         onChange={setPrompt}
         placeHolder="My review card is about"
@@ -14,8 +15,7 @@ export default function Prompt({ submit, setPrompt, prompt}) {
   </>);
 }
 
-const Label = styled.label`
-`;
+const Label = styled.label``;
 
 const StyledTextArea = styled.textarea`
   width: 100%;

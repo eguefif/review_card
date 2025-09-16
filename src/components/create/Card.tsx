@@ -1,15 +1,23 @@
-import Questions from './Questions';
+import EditableQuizs from './EditableQuizs';
 import CardContentEditor from './CardContentEditor';
 
 import styled from '@emotion/styled';
 
-export default function Card({ content, setContent, questions }) {
+export default function Card(
+  { content, setContent, questions, updateQuiz}
+) {
   return (
     <>
       <Result>
         <CardContentEditor content={content} setContent={setContent} />
       </Result>
-      {questions ? <Questions questions={questions} /> : ''}
+      { questions
+          ? <EditableQuizs
+            questions={questions} 
+            updateQuiz={updateQuiz}
+          />
+          : ''
+      }
     </>
   );
 }

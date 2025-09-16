@@ -27,6 +27,16 @@ export default function CardCrafter() {
     setTopic(e.target.value);
   }
 
+  function updateQuiz(id, newQuestion, options) {
+    const newQuestions = questions.map((question) => {
+      if (question.id == id) {
+        question.question = newQuestion;
+      }
+      return question;
+    })
+    setQuestions(newQuestions);
+  }
+
   return (
     <Wrapper>
       <h1>Create Your Review Card</h1>
@@ -45,6 +55,7 @@ export default function CardCrafter() {
             content={content} 
             setContent={setContent}
             questions={questions} 
+            updateQuiz={updateQuiz}
           />
         </CardWrapper>
       </ContentWrapper>
