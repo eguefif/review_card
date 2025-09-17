@@ -12,7 +12,7 @@ export default function CardCrafter() {
   const [questions, setQuestions] = useState('');
 
   async function promptAi() {
-    const [ result, questions ] = await invoke('prompt_ai', { topic: topic });
+    const [result, questions] = await invoke('prompt_ai', { topic: topic });
     setContent(result);
     setQuestions(questions);
     console.log(questions);
@@ -34,7 +34,7 @@ export default function CardCrafter() {
         return { ...question, question: newQuestion, options };
       }
       return question;
-    })
+    });
     setQuestions(newQuestions);
   }
 
@@ -44,24 +44,24 @@ export default function CardCrafter() {
 
       <ContentWrapper>
         <PromptWrapper>
-          <Prompt 
-            submit={submitOnEnterKey} 
-            setPrompt={updatePrompt} 
-            prompt={prompt} 
+          <Prompt
+            submit={submitOnEnterKey}
+            setPrompt={updatePrompt}
+            prompt={prompt}
           />
         </PromptWrapper>
 
         <CardWrapper>
-          <Card 
-            content={content} 
+          <Card
+            content={content}
             setContent={setContent}
-            questions={questions} 
+            questions={questions}
             updateQuiz={updateQuiz}
           />
         </CardWrapper>
       </ContentWrapper>
     </Wrapper>
-  )
+  );
 }
 
 const Wrapper = styled.div`

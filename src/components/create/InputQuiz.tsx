@@ -1,48 +1,43 @@
 import styled from '@emotion/styled';
 import EditableOption from './EditableOption';
 
-export default function InputQuiz( {question, options, updateQuiz, id}) {
-    let options_component = options.map((option) => {
-        return (<EditableOption 
-          key={option.id} 
-          answer={option.answer} 
-          id={option.id} 
-          editOption={editOption}
-        /> )
-      });
+export default function InputQuiz({ question, options, updateQuiz, id }) {
+  let options_component = options.map((option) => {
+    return (
+      <EditableOption
+        key={option.id}
+        answer={option.answer}
+        id={option.id}
+        editOption={editOption}
+      />
+    );
+  });
 
-    function editQuestion(event) {
-      const newQuestion = event.target.value;
-      updateQuiz(id, newQuestion, options);
-    }
-
-  function editOption(optionId, newAnswer) {
-      const newOptions = options.map((option) => {
-        if (option.id === optionId) {
-          return { ...option, answer: newAnswer };
-        }
-        return option;
-      });
-      updateQuiz(id, question, newOptions);
+  function editQuestion(event) {
+    const newQuestion = event.target.value;
+    updateQuiz(id, newQuestion, options);
   }
 
-    return (
-    <Wrapper>
+  function editOption(optionId, newAnswer) {
+    const newOptions = options.map((option) => {
+      if (option.id === optionId) {
+        return { ...option, answer: newAnswer };
+      }
+      return option;
+    });
+    updateQuiz(id, question, newOptions);
+  }
 
+  return (
+    <Wrapper>
       <QuestionWrapper>
         <Label>Question</Label>
-        <QuestionInput 
-          value={question}
-          onChange={editQuestion}
-        />
+        <QuestionInput value={question} onChange={editQuestion} />
       </QuestionWrapper>
 
-      <AnswersWrapper>
-      { options_component }
-      </AnswersWrapper>
-
+      <AnswersWrapper>{options_component}</AnswersWrapper>
     </Wrapper>
-    );
+  );
 }
 
 const Wrapper = styled.div`

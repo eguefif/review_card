@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 
-export default function Prompt({ submit, setPrompt, prompt}) {
-
+export default function Prompt({ submit, setPrompt, prompt }) {
   return (
-  <>
+    <>
       <Label focus>Card Content</Label>
-      <StyledTextArea 
+      <StyledTextArea
         name="prompt"
         value={prompt}
         onChange={setPrompt}
         placeHolder="My review card is about"
         onKeyDown={submit}
       />
-  </>);
+    </>
+  );
 }
 
 const Label = styled.label``;
