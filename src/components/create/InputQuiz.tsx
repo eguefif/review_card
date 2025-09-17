@@ -16,14 +16,14 @@ export default function InputQuiz( {question, options, updateQuiz, id}) {
       updateQuiz(id, newQuestion, options);
     }
 
-  function editOption(id, newAnswer) {
-      options = options.map((option) => {
-        if (option.id === id) {
-          option.answer = newAnswer;
+  function editOption(optionId, newAnswer) {
+      const newOptions = options.map((option) => {
+        if (option.id === optionId) {
+          return { ...option, answer: newAnswer };
         }
         return option;
       });
-      updateQuiz(id, question, options);
+      updateQuiz(id, question, newOptions);
   }
 
     return (

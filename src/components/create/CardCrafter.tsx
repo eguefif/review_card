@@ -15,6 +15,7 @@ export default function CardCrafter() {
     const [ result, questions ] = await invoke('prompt_ai', { topic: topic });
     setContent(result);
     setQuestions(questions);
+    console.log(questions);
   }
 
   function submitOnEnterKey(event) {
@@ -30,7 +31,7 @@ export default function CardCrafter() {
   function updateQuiz(id, newQuestion, options) {
     const newQuestions = questions.map((question) => {
       if (question.id == id) {
-        question.question = newQuestion;
+        return { ...question, question: newQuestion, options };
       }
       return question;
     })

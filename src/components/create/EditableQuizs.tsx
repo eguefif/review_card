@@ -24,4 +24,3 @@ export default function EditableQuizs({ questions, updateQuiz }) {
 }
 
 const Option = styled.li``
-
