@@ -1,20 +1,56 @@
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-struct Question{
+pub struct Question {
+    id: usize,
     question: String,
-    response: Vec::<String>,
+    options: Vec::<Option>,
 }
 
-pub fn extract_json(content: &str) -> &str {
 
-}
-#[cfg(test)]
-
-mod tests {
-    use super::*;
-
-    fn it_should_get_json_string() {
-        let response = "
-Here's a JSON with multiple-choice questions based on the CSS Grid review card: ```json { \"quizTitle\": \"CSS Grid MCQ Quiz\", \"questions\": [ { \"question\": \"What is CSS Grid primarily used for?\", \"options\": [ \"Styling text\", \"Creating two-dimensional layouts\", \"Animating web elements\", \"Managing database connections\" ], \"correctAnswer\": \"Creating two-dimensional layouts\" }, { \"question\": \"What CSS property is used to create a grid container?\", \"options\": [ \"grid-layout: enable\", \"display: grid\", \"grid-type: container\", \"layout: grid\" ], \"correctAnswer\": \"display: grid\" }, { \"question\": \"What does 'fr' unit represent in grid layout?\", \"options\": [ \"Fixed width\", \"Font resize\", \"Fractional unit\", \"Frame rate\" ], \"correctAnswer\": \"Fractional unit\" }, { \"question\": \"Which of the following is NOT a key concept in CSS Grid?\", \"options\": [ \"Grid Container\", \"Grid Lines\", \"Grid Tracks\", \"Grid Shadows\" ], \"correctAnswer\": \"Grid Shadows\" }, { \"question\": \"What is the primary advantage of CSS Grid over Flexbox?\", \"options\": [ \"Better performance\", \"Two-dimensional layout control\", \"More browser compatibility\", \"Easier syntax\" ], \"correctAnswer\": \"Two-dimensional layout control\" } ] } ```
-    "
+impl Question {
+    pub fn new(parsed_question: ParsedQuestion, id: usize) -> Self {
+        Self {
+            question: parsed_question.question.clone(),
+            options: parsed_question.options.clone(),
+            id: id,
+        }
     }
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct Option {
+    id: usize,
+    answer: String,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct ParsedQuestion {
+    pub question: String,
+    pub options: Vec::<Option>,
+}
+
+impl ParsedQuestion {
+    pub fn new(question: String, options: Vec::<Option>) -> Self {
+        return Self {
+            question,
+            options
+        }
+    }
+}
+
+pub fn mock_questions() -> Vec<Question> {
+    let mocked_questions: Vec<Question> = vec![
+        Question::new(ParsedQuestion::new("What's France's capital City?".to_string(), 
+            vec![
+                Option {id: 0, answer: "Paris".to_string()},
+                Option {id: 1, answer: "Berlin".to_string() }, 
+                Option {id: 2, answer: "Madrid".to_string() }
+                ]), 1),
+        Question::new(ParsedQuestion::new("What is the weather".to_string(), 
+            vec![
+                Option { id: 0, answer: "Cloudy".to_string()},
+                Option { id: 1, answer: "Rainny".to_string()},
+                Option { id: 2, answer: "Sunny".to_string()}
+            ]), 2)
+    ];
+    mocked_questions
 }

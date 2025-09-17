@@ -1,8 +1,9 @@
 use reqwest;
 use dotenv::dotenv;
-use serde::{Serialize, Deserialize};
 
 use crate::ai_app::anthropic::{Anthropic, Role};
+
+use crate::ai_app::questions_parsing::{Question, ParsedQuestion, mock_questions};
 
 const mocked_card: &str = r#"
 # Css layout algorithm
@@ -24,20 +25,12 @@ pub async fn prompt_ai(topic: String) -> (String, Vec<Question>) {
 
     //let questions = get_questions(&mut client, &card).await;
 
-
-
-    let mocked_questions: Vec<Question> = vec![
-        Question::new("What's France's capital City?".into(), 
-            vec!["Paris".into(), "Berlin".into(), "Madrid".into()]),
-        Question::new("What is the weather".into(), 
-            vec!["Cloudy".into(), "Rainny".into(), "Sunny".into()]),
-    ];
-
-    let questions = mocked_questions;
+    let questions = mock_questions();
     let card = mocked_card.to_string();
 
     (card, questions)
 }
+
 
 fn expand_prompt(topic: &str) -> String {
     format!("Can you create a review card for the following topic?\n\n{}", topic)
@@ -70,7 +63,7 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Vec<Question> {
     }
     "#;
 
-    let prompt = format!("Based on the following review card, can genereate a few questions and answers for a MCQ quiz? You need to return a json.\n{}, Here is the format of the json {}Here is an example of the json you need to out put: {}.", card, format, example);
+    let prompt = format!("Based on the following review card, can you generate a few questions and answers for a MCQ quiz? You need to return a json.\n{}, Here is the format of the json {}Here is an example of the json you need to out put: {}.", card, format, example);
 
 
     client.push_message(Role::User, prompt);
@@ -83,24 +76,14 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Vec<Question> {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Question{
-    question: String,
-    options: Vec::<String>,
-}
-
-impl Question {
-    pub fn new(question: String, options: Vec::<String>) -> Self {
-        return Self{
-            question,
-            options
-        }
-    }
-}
-
 fn handle_response(response: String) -> Vec<Question>{
     let json = format!("{{{}", response);
-    let questions: Vec<Question> = serde_json::from_str(&json).expect("not formated");
+    let parsed_questions: Vec<ParsedQuestion> = serde_json::from_str(&json).expect("not formated");
+    let mut questions: Vec<Question> = vec![];
 
+    for (i, parsed_question) in parsed_questions.into_iter().enumerate() {
+        let question = Question::new(parsed_question, i);
+        questions.push(question);
+    }
     questions
 }

@@ -7,13 +7,15 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "format": "prettier --write src"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-opener": "^2.5.0",
+    "@uiw/react-md-editor": "^4.0.8",
     "dompurify": "^3.2.6",
     "marked": "^16.2.1",
     "react": "^19.1.1",
@@ -24,6 +26,7 @@
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^4.7.0",
+    "prettier": "^3.6.2",
     "typescript": "~5.6.3",
     "vite": "^6.3.5"
   }
