@@ -1,9 +1,9 @@
-use reqwest;
 use dotenv::dotenv;
+use reqwest;
 
 use crate::ai_app::anthropic::{Anthropic, Role};
 
-use crate::ai_app::questions_parsing::{Question, ParsedQuestion, mock_questions};
+use crate::ai_app::questions_parsing::{mock_questions, ParsedQuestion, Question};
 
 const mocked_card: &str = r#"
 # Css layout algorithm
@@ -31,9 +31,11 @@ pub async fn prompt_ai(topic: String) -> (String, Vec<Question>) {
     (card, questions)
 }
 
-
 fn expand_prompt(topic: &str) -> String {
-    format!("Can you create a review card for the following topic?\n\n{}", topic)
+    format!(
+        "Can you create a review card for the following topic?\n\n{}",
+        topic
+    )
 }
 
 async fn get_questions(client: &mut Anthropic, card: &str) -> Vec<Question> {
@@ -65,18 +67,17 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Vec<Question> {
 
     let prompt = format!("Based on the following review card, can you generate a few questions and answers for a MCQ quiz? You need to return a json.\n{}, Here is the format of the json {}Here is an example of the json you need to out put: {}.", card, format, example);
 
-
     client.push_message(Role::User, prompt);
     client.push_message(Role::Assistant, "The json is: {".into());
     println!("{:?}", client.messages);
 
     match client.send_message().await {
         Ok(response) => handle_response(response),
-        Err(_) => panic!()
+        Err(_) => panic!(),
     }
 }
 
-fn handle_response(response: String) -> Vec<Question>{
+fn handle_response(response: String) -> Vec<Question> {
     let json = format!("{{{}", response);
     let parsed_questions: Vec<ParsedQuestion> = serde_json::from_str(&json).expect("not formated");
     let mut questions: Vec<Question> = vec![];

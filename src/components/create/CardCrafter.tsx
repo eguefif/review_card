@@ -15,10 +15,9 @@ export default function CardCrafter() {
     const [result, questions] = await invoke('prompt_ai', { topic: topic });
     setContent(result);
     setQuestions(questions);
-    console.log(questions);
   }
 
-  function submitOnEnterKey(event) {
+  function onPromptSubmit(event) {
     if (event.key === 'Enter') {
       promptAi();
     }
@@ -38,6 +37,10 @@ export default function CardCrafter() {
     setQuestions(newQuestions);
   }
 
+  function persistData() {
+    console.log('saving...');
+  }
+
   return (
     <Wrapper>
       <h1>Create Your Review Card</h1>
@@ -45,10 +48,11 @@ export default function CardCrafter() {
       <ContentWrapper>
         <PromptWrapper>
           <Prompt
-            submit={submitOnEnterKey}
+            submit={onPromptSubmit}
             setPrompt={updatePrompt}
             prompt={prompt}
           />
+          {content ? <SaveButton onClick={persistData}>Save</SaveButton> : ''}
         </PromptWrapper>
 
         <CardWrapper>
@@ -83,9 +87,16 @@ const ContentWrapper = styled.div`
 `;
 
 const PromptWrapper = styled.div`
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
 `;
 
 const CardWrapper = styled.div`
   flex: 3;
 `;
+
+const SaveButton = styled.button``;
