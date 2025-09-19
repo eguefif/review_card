@@ -2,6 +2,7 @@ mod ai;
 mod app_state;
 mod card;
 
+use dotenv::dotenv;
 use crate::app_state::AppData;
 use std::sync::Mutex;
 use tauri::Manager;
@@ -33,6 +34,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {
+            dotenv().ok();
             let store = app.store(STORE_NAME)?;
             let keys = store.keys();
             let next_card_id = get_next_card_id(keys);
