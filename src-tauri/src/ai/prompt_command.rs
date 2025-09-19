@@ -3,9 +3,9 @@
 use dotenv::dotenv;
 use reqwest;
 
-use crate::ai_app::anthropic::{Anthropic, Role};
+use crate::ai::anthropic::{Anthropic, Role};
 
-use crate::ai_app::questions_parsing::{mock_questions, ParsedQuestion, Question};
+use crate::card::question::{mock_questions, ParsedQuestion, Question};
 
 const MOCKED_CARD: &str = r#"
 # Css layout algorithm
@@ -20,7 +20,7 @@ They all serves different purpose depending on the goal.
 "#;
 
 #[tauri::command]
-pub async fn prompt_ai(topic: String) -> (String, Vec<Question>) {
+pub async fn prompt(topic: String) -> (String, Vec<Question>) {
     dotenv().ok();
     //let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
     //let card = create_review_card(&mut client, &topic).await;

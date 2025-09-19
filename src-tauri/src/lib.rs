@@ -1,11 +1,11 @@
-mod ai_app;
+mod ai;
 mod app_state;
-mod persist_card;
+mod card;
 
-use tauri::Manager;
-use tauri_plugin_store::StoreExt;
 use crate::app_state::AppData;
 use std::sync::Mutex;
+use tauri::Manager;
+use tauri_plugin_store::StoreExt;
 
 const STORE_NAME: &str = "cards.json";
 
@@ -20,10 +20,12 @@ fn get_next_card_id(keys: Vec<String>) -> u64 {
         }
     }
     let next_id = highest_id + 1;
-    println!("Init next_id: {} (highest existing: {})", next_id, highest_id);
+    println!(
+        "Init next_id: {} (highest existing: {})",
+        next_id, highest_id
+    );
     next_id
 }
-
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -34,14 +36,12 @@ pub fn run() {
             let store = app.store(STORE_NAME)?;
             let keys = store.keys();
             let next_card_id = get_next_card_id(keys);
-            app.manage(Mutex::new(AppData {
-                next_card_id,
-            }));
+            app.manage(Mutex::new(AppData { next_card_id }));
             Ok(())
-         })
+        })
         .invoke_handler(tauri::generate_handler![
-            ai_app::prompt::prompt_ai,
-            persist_card::save_card,
+            ai::prompt_command::prompt,
+            card::commands::save_card,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

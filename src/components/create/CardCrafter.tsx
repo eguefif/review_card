@@ -12,7 +12,7 @@ export default function CardCrafter() {
   const [questions, setQuestions] = useState('');
 
   async function promptAi() {
-    const [result, questions] = await invoke('prompt_ai', { topic: topic });
+    const [result, questions] = await invoke('prompt', { topic: topic });
     setContent(result);
     setQuestions(questions);
   }
@@ -39,7 +39,9 @@ export default function CardCrafter() {
 
   async function persistData() {
     console.log('saving...');
-    let result = await invoke('save_card',{ card: {content: content, questions: questions } }); 
+    let result = await invoke('save_card', {
+      card: { content: content, questions: questions },
+    });
   }
 
   return (
