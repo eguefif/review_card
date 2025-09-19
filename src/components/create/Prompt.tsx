@@ -1,14 +1,21 @@
 import styled from '@emotion/styled';
+import { ChangeEvent, KeyboardEvent } from 'react';
 
-export default function Prompt({ submit, setPrompt, prompt }) {
+interface PromptProps {
+  submit: (e: KeyboardEvent<HTMLTextAreaElement>) => void;
+  setPrompt: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+  prompt: string;
+}
+
+export default function Prompt({ submit, setPrompt, prompt }: PromptProps) {
   return (
     <>
-      <Label focus>Card Content</Label>
+      <Label>Card Content</Label>
       <StyledTextArea
         name="prompt"
         value={prompt}
         onChange={setPrompt}
-        placeHolder="My review card is about"
+        placeholder="My review card is about"
         onKeyDown={submit}
       />
     </>

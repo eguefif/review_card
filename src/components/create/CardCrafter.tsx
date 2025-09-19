@@ -6,18 +6,24 @@ import Card from './Card';
 import Prompt from './Prompt';
 
 export default function CardCrafter() {
+  const [error, setError] = useState('');
   const [content, setContent] = useState('');
   const [prompt, setPrompt] = useState('');
   const [topic, setTopic] = useState('');
   const [questions, setQuestions] = useState('');
 
   async function promptAi() {
-    const [result, questions] = await invoke('prompt', { topic: topic });
-    setContent(result);
-    setQuestions(questions);
+    try {
+      const [result, questions] = await invoke('prompt', { topic: topic });
+      setContent(result);
+      setQuestions(questions);
+    } catch (error) {
+      console.log(error);
+      setError("There was a problem with the Anthropic API. Retry later");
+    }
   }
 
-  function onPromptSubmit(event) {
+  function onPromptSubmit(event: React.ChangeEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter') {
       promptAi();
     }
@@ -53,18 +59,22 @@ export default function CardCrafter() {
           <Prompt
             submit={onPromptSubmit}
             setPrompt={updatePrompt}
-            prompt={prompt}
+            prompt={topic}
           />
           {content ? <SaveButton onClick={persistData}>Save</SaveButton> : ''}
         </PromptWrapper>
 
         <CardWrapper>
-          <Card
-            content={content}
-            setContent={setContent}
-            questions={questions}
-            updateQuiz={updateQuiz}
-          />
+          {
+            error.length === 0
+              ? <Card
+                content={content}
+                setContent={setContent}
+                questions={questions}
+                updateQuiz={updateQuiz}
+              />
+              : <ErrorMessage>{error}</ErrorMessage>
+          }
         </CardWrapper>
       </ContentWrapper>
     </Wrapper>
@@ -103,3 +113,8 @@ const CardWrapper = styled.div`
 `;
 
 const SaveButton = styled.button``;
+
+const ErrorMessage = styled.h3`
+  text-align: center;
+  color: red;
+`;
