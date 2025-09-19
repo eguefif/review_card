@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+#![allow(unused)]
 use dotenv::dotenv;
 use reqwest;
 
@@ -5,7 +7,7 @@ use crate::ai_app::anthropic::{Anthropic, Role};
 
 use crate::ai_app::questions_parsing::{mock_questions, ParsedQuestion, Question};
 
-const mocked_card: &str = r#"
+const MOCKED_CARD: &str = r#"
 # Css layout algorithm
 There are five algorithms: 
 * block
@@ -26,7 +28,7 @@ pub async fn prompt_ai(topic: String) -> (String, Vec<Question>) {
     //let questions = get_questions(&mut client, &card).await;
 
     let questions = mock_questions();
-    let card = mocked_card.to_string();
+    let card = MOCKED_CARD.to_string();
 
     (card, questions)
 }

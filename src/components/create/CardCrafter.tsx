@@ -37,8 +37,9 @@ export default function CardCrafter() {
     setQuestions(newQuestions);
   }
 
-  function persistData() {
+  async function persistData() {
     console.log('saving...');
+    let result = await invoke('save_card',{ card: {content: content, questions: questions } }); 
   }
 
   return (
