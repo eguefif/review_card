@@ -8,13 +8,14 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "format": "prettier --write src"
+    "format": "prettier --write src && cargo fmt --manifest-path src-tauri/Cargo.toml"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@tauri-apps/api": "^2.8.0",
     "@tauri-apps/plugin-opener": "^2.5.0",
+    "@tauri-apps/plugin-store": "~2.4.0",
     "@uiw/react-md-editor": "^4.0.8",
     "dompurify": "^3.2.6",
     "marked": "^16.2.1",

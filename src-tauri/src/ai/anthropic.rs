@@ -1,14 +1,14 @@
-use reqwest;
-use serde::{Serialize, Deserialize};
+#![allow(dead_code)]
+#![allow(unused)]
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Role {
     #[serde(rename = "assistant")]
     Assistant,
     #[serde(rename = "user")]
-    User
+    User,
 }
-
 
 pub struct Anthropic {
     api_key: String,
@@ -27,7 +27,7 @@ impl Anthropic {
             model,
             max_tokens,
             client,
-            messages: vec![]
+            messages: vec![],
         }
     }
 
@@ -39,17 +39,21 @@ impl Anthropic {
     pub async fn send_message(&mut self) -> Result<String, Box<dyn std::error::Error>> {
         let message = Message::new(self.model.clone(), self.max_tokens, self.messages.clone());
 
-        let response = self.client.post("https://api.anthropic.com/v1/messages")
-        .header("Content-Type", "application/json")
-        .header("anthropic-version", "2023-06-01")
-        .header("x-api-key", &self.api_key)
-        .header("Content-Type", "application/json")
-        .json(&message)
-        .send()
-        .await?;
+        let response = self
+            .client
+            .post("https://api.anthropic.com/v1/messages")
+            .header("Content-Type", "application/json")
+            .header("anthropic-version", "2023-06-01")
+            .header("x-api-key", &self.api_key)
+            .header("Content-Type", "application/json")
+            .json(&message)
+            .send()
+            .await?;
 
         self.messages.clear();
-        Ok(response.json::<Response>().await.unwrap().content[0].text.clone())
+        Ok(response.json::<Response>().await.unwrap().content[0]
+            .text
+            .clone())
     }
 }
 
@@ -61,10 +65,7 @@ pub struct MessageContent {
 
 impl MessageContent {
     pub fn new(role: Role, content: String) -> Self {
-        Self {
-            role,
-            content
-        }
+        Self { role, content }
     }
 }
 
@@ -80,7 +81,7 @@ impl Message {
         Self {
             model,
             max_tokens,
-            messages
+            messages,
         }
     }
 }
@@ -94,9 +95,8 @@ struct ResponseContent {
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct ServerToolUse {
-    web_search_requets: u64
+    web_search_requets: u64,
 }
-
 
 #[derive(serde::Serialize, serde::Deserialize)]
 struct CacheCreation {
@@ -130,5 +130,5 @@ struct Response {
     stop_reason: Option<String>,
     stop_sequence: Option<String>,
     usage: Usage,
-    container: Option<Container>
+    container: Option<Container>,
 }
