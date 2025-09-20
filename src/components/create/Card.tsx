@@ -1,9 +1,17 @@
 import EditableQuizs from './EditableQuizs';
 import CardContentEditor from './CardContentEditor';
+import { Question } from '../../types/card';
 
 import styled from '@emotion/styled';
 
-export default function Card({ content, setContent, questions, setQuestions }) {
+interface CardProps {
+  content: string;
+  setContent: (content: string) => void;
+  questions: Question[];
+  setQuestions: (questions: Question[]) => void;
+}
+
+export default function Card({ content, setContent, questions, setQuestions }: CardProps) {
   return (
     <>
       <Result>

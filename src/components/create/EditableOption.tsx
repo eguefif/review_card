@@ -1,6 +1,13 @@
 import styled from '@emotion/styled';
 
-export default function EditableOption({ answer, id, editOption, deleteOption }) {
+interface EditableOptionProps {
+  answer: string;
+  id: string;
+  editOption: (id: string, newAnswer: string) => void;
+  deleteOption: (id: string) => void;
+}
+
+export default function EditableOption({ answer, id, editOption, deleteOption }: EditableOptionProps) {
   function handleOnChangeEvent(event) {
     const newAnswer = event.target.value;
     editOption(id, newAnswer);

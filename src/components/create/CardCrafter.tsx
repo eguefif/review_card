@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
+import { Card as CardType, Question } from '../../types/card';
 
 import Card from './Card';
 import Prompt from './Prompt';
@@ -10,7 +11,7 @@ export default function CardCrafter() {
   const [content, setContent] = useState('');
   const [prompt, setPrompt] = useState('');
   const [topic, setTopic] = useState('');
-  const [questions, setQuestions] = useState('');
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   async function promptAi() {
     try {
@@ -40,9 +41,8 @@ export default function CardCrafter() {
 
   async function persistData() {
     console.log('saving...');
-    let result = await invoke('save_card', {
-      card: { content: content, questions: questions },
-    });
+    const card: CardType = { content, questions };
+    let result = await invoke('save_card', { card });
   }
 
   return (
