@@ -9,7 +9,9 @@ export interface Question {
   options: Option[];
 }
 
+export type Quiz = Question[];
+
 export interface Card {
   content: string;
-  questions: Question[];
+  questions: Quiz;
 }

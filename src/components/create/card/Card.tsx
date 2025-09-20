@@ -1,26 +1,26 @@
-import EditableQuizs from './EditableQuizs';
+import QuizContainer from './QuizContainer';
 import CardContentEditor from './CardContentEditor';
-import { Question } from '../../../types/card';
+import { Quiz } from '../../../types/card';
 
 import styled from '@emotion/styled';
 
 interface CardProps {
   content: string;
   setContent: (content: string) => void;
-  questions: Question[];
-  setQuestions: (questions: Question[]) => void;
+  quiz: Quiz;
+  setQuiz: (quiz: Quiz) => void;
 }
 
-export default function Card({ content, setContent, questions, setQuestions }: CardProps) {
+export default function Card({ content, setContent, quiz, setQuiz }: CardProps) {
   return (
     <>
       <Result>
         <CardContentEditor content={content} setContent={setContent} />
       </Result>
-      {questions ? (
-        <EditableQuizs
-          questions={questions}
-          setQuestions={setQuestions} />
+      {quiz ? (
+        <QuizContainer
+          questions={quiz}
+          setQuestions={setQuiz} />
         ) : (
         ''
       )}

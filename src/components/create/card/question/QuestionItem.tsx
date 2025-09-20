@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import EditableOption from './EditableOption';
-import { Option } from '../../../types/card';
+import OptionItem from './OptionItem';
+import { Option } from '../../../../types/card';
 
-interface InputQuizProps {
+interface QuestionItemProps {
   question: string;
   options: Option[];
   updateQuiz: (id: string, newQuestion: string, options: Option[]) => void;
@@ -10,10 +10,10 @@ interface InputQuizProps {
   id: string;
 }
 
-export default function InputQuiz({ question, options, updateQuiz, deleteQuestion, id }: InputQuizProps) {
+export default function QuestionItem({ question, options, updateQuiz, deleteQuestion, id }: QuestionItemProps) {
   let options_component = options.map((option) => {
     return (
-      <EditableOption
+      <OptionItem
         key={option.id}
         answer={option.answer}
         id={option.id}
