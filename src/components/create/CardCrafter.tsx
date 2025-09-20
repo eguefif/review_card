@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
+import { Card as CardType, Quiz } from '../../types/card';
 
-import Card from './Card';
-import Prompt from './Prompt';
+import Card from './card/Card';
+import Prompt from './prompt/Prompt';
 
 export default function CardCrafter() {
   const [error, setError] = useState('');
   const [content, setContent] = useState('');
   const [prompt, setPrompt] = useState('');
   const [topic, setTopic] = useState('');
-  const [questions, setQuestions] = useState('');
+  const [quiz, setQuiz] = useState<Quiz>([]);
 
   async function promptAi() {
     try {
-      const [result, questions] = await invoke('prompt', { topic: topic });
+      const [result, quiz] = await invoke('prompt', { topic: topic });
       setContent(result);
-      setQuestions(questions);
+      setQuiz(quiz);
     } catch (error) {
       console.log(error);
       setError("There was a problem with the Anthropic API. Retry later");
@@ -40,9 +41,8 @@ export default function CardCrafter() {
 
   async function persistData() {
     console.log('saving...');
-    let result = await invoke('save_card', {
-      card: { content: content, questions: questions },
-    });
+    const card: CardType = { content, questions: quiz };
+    let result = await invoke('save_card', { card });
   }
 
   return (
@@ -65,8 +65,8 @@ export default function CardCrafter() {
               ? <Card
                 content={content}
                 setContent={setContent}
-                questions={questions}
-                setQuestions={setQuestions}
+                quiz={quiz}
+                setQuiz={setQuiz}
               />
               : <ErrorMessage>{error}</ErrorMessage>
           }

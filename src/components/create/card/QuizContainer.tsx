@@ -1,19 +1,14 @@
 import styled from '@emotion/styled';
-import InputQuiz from './InputQuiz';
+import QuestionItem from './question/QuestionItem';
+import { Quiz as QuizType, Option } from '../../../types/card';
 
-interface Question {
-  id: string;
-  question: string;
-  options: string[];
+interface QuizContainerProps {
+  questions: QuizType;
+  setQuestions: (questions: QuizType) => void;
 }
 
-interface EditableQuizsProps {
-  questions: Question[];
-  setQuestions: (questions: Question[]) => void;
-}
-
-export default function EditableQuizs({ questions, setQuestions }: EditableQuizsProps) {
-  function updateQuiz(id: string, newQuestion: string, options: string[]) {
+export default function QuizContainer({ questions, setQuestions }: QuizContainerProps) {
+  function updateQuiz(id: string, newQuestion: string, options: Option[]) {
     const newQuestions = questions.map((question) => {
       if (question.id == id) {
         return { ...question, question: newQuestion, options };
@@ -29,7 +24,7 @@ export default function EditableQuizs({ questions, setQuestions }: EditableQuizs
 
   let content = questions.map((question) => {
     return (
-      <InputQuiz
+      <QuestionItem
         question={question.question}
         options={question.options}
         updateQuiz={updateQuiz}
@@ -42,5 +37,3 @@ export default function EditableQuizs({ questions, setQuestions }: EditableQuizs
 
   return content;
 }
-
-const Option = styled.li``;
