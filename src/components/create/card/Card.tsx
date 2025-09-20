@@ -1,6 +1,6 @@
 import EditableQuizs from './EditableQuizs';
 import CardContentEditor from './CardContentEditor';
-import { Question } from '../../types/card';
+import { Question } from '../../../types/card';
 
 import styled from '@emotion/styled';
 

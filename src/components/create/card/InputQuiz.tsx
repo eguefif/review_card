@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import EditableOption from './EditableOption';
-import { Option } from '../../types/card';
+import { Option } from '../../../types/card';
 
 interface InputQuizProps {
   question: string;

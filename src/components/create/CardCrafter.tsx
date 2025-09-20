@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
 import { Card as CardType, Question } from '../../types/card';
 
-import Card from './Card';
-import Prompt from './Prompt';
+import Card from './card/Card';
+import Prompt from './prompt/Prompt';
 
 export default function CardCrafter() {
   const [error, setError] = useState('');

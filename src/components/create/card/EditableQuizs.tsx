@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import InputQuiz from './InputQuiz';
-import { Question, Option } from '../../types/card';
+import { Question, Option } from '../../../types/card';
 
 interface EditableQuizsProps {
   questions: Question[];
