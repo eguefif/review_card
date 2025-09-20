@@ -1,4 +1,4 @@
-use crate::app_state::AppData;
+use crate::app_data::AppData;
 use crate::card::card_content::Card;
 use std::sync::Mutex;
 use tauri::{AppHandle, State};

@@ -7,9 +7,14 @@ pub struct Question {
 
 impl Question {
     pub fn new(parsed_question: ParsedQuestion, id: usize) -> Self {
+        let mut options: Vec<Option> = vec![];
+        for (i, string_option) in parsed_question.options.into_iter().enumerate() {
+            let option = Option { id: i, answer: string_option };
+            options.push(option);
+        }
         Self {
             question: parsed_question.question.clone(),
-            options: parsed_question.options.clone(),
+            options: options,
             id: id,
         }
     }
@@ -24,11 +29,11 @@ pub struct Option {
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct ParsedQuestion {
     pub question: String,
-    pub options: Vec<Option>,
+    pub options: Vec<String>,
 }
 
 impl ParsedQuestion {
-    pub fn new(question: String, options: Vec<Option>) -> Self {
+    pub fn new(question: String, options: Vec<String>) -> Self {
         return Self { question, options };
     }
 }

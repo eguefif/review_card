@@ -1,4 +1,4 @@
-use crate::card::question::{Question, Option, ParsedQuestion};
+use crate::card::question::{Question, ParsedQuestion};
 
 pub const MOCKED_CARD: &str = r#"
 # Css layout algorithm
@@ -19,18 +19,9 @@ pub fn mocked_questions() -> Vec<Question> {
             ParsedQuestion::new(
                 "What's France's capital City?".to_string(),
                 vec![
-                    Option {
-                        id: 0,
-                        answer: "Paris".to_string(),
-                    },
-                    Option {
-                        id: 1,
-                        answer: "Berlin".to_string(),
-                    },
-                    Option {
-                        id: 2,
-                        answer: "Madrid".to_string(),
-                    },
+                    "Paris".to_string(),
+                    "Berlin".to_string(),
+                    "Madrid".to_string(),
                 ],
             ),
             1,
@@ -39,18 +30,9 @@ pub fn mocked_questions() -> Vec<Question> {
             ParsedQuestion::new(
                 "What is the weather".to_string(),
                 vec![
-                    Option {
-                        id: 0,
-                        answer: "Cloudy".to_string(),
-                    },
-                    Option {
-                        id: 1,
-                        answer: "Rainny".to_string(),
-                    },
-                    Option {
-                        id: 2,
-                        answer: "Sunny".to_string(),
-                    },
+                        "Cloudy".to_string(),
+                        "Rainny".to_string(),
+                        "Sunny".to_string(),
                 ],
             ),
             2,

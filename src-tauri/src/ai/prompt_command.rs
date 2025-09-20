@@ -41,7 +41,7 @@ async fn create_review_card(client: &mut Anthropic, topic: &str) -> Result<Strin
 
 fn create_prompt(topic: &str) -> String {
     format!(
-        "Can you create a review card for the following topic?\n\n{}",
+        "I want you to create a review card. This review card should only be text and separate in meaningfull sections. Can you create a review card for the following topic?\n\n{}",
         topic
     )
 }
@@ -81,30 +81,15 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Result<Vec<Questio
 }
 
 fn handle_response(json: String) -> Vec<Question> {
-    // The Anthropic API will truncate the first {, we need
+    // The Anthropic API will truncate the first [, we need
     // to add it manually. See Anthropic documentation for JSON
+    let json = format!("[{json}");
 
-    // Try to parse as nested structure first - look for any array value
-    if let Ok(nested) = serde_json::from_str::<serde_json::Value>(&json) {
-        if let Some(obj) = nested.as_object() {
-            // Look for any key that contains an array that can be parsed as questions
-            for (key, value) in obj {
-                if let Some(array) = value.as_array() {
-                    if let Ok(parsed_questions) = serde_json::from_value::<Vec<ParsedQuestion>>(value.clone()) {
-                        println!("Found questions array under key: {}", key);
-                        return create_questions_from_parsed(parsed_questions);
-                    }
-                }
-            }
-        }
-    }
-
-    // Fallback to direct array parsing
+    println!("Questions:\n\n {}", json);
     if let Ok(parsed_questions) = serde_json::from_str::<Vec<ParsedQuestion>>(&json) {
         return create_questions_from_parsed(parsed_questions);
     }
-
-    panic!("Could not parse JSON response");
+    println!("\x1b[31mError: Could not parse JSON response\x1b[0m");
 }
 
 fn create_questions_from_parsed(parsed_questions: Vec<ParsedQuestion>) -> Vec<Question> {

@@ -1,9 +1,9 @@
 mod ai;
-mod app_state;
+mod app_data;
 mod card;
 
 use dotenv::dotenv;
-use crate::app_state::AppData;
+use crate::app_data::AppData;
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri_plugin_store::StoreExt;
