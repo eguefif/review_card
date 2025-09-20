@@ -9,28 +9,20 @@ use crate::card::question::{ParsedQuestion, Question};
 
 #[tauri::command]
 pub async fn prompt(topic: String) -> Result<(String, Vec<Question>), AIError> {
-    std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
-    let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
-    let card = create_review_card(&mut client, &topic).await?;
-    println!("Card:\n\n{}", card);
-    println!();
-    println!();
-    println!();
+    //std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
+    //let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
+    //let card = create_review_card(&mut client, &topic).await?;
 
-    let questions = get_questions(&mut client, &card).await?;
+    //let questions = get_questions(&mut client, &card).await?;
 
-    //let questions = mocked_questions();
-    //let card = MOCKED_CARD.to_string();
+    let questions = mocked_questions();
+    let card = MOCKED_CARD.to_string();
 
     Ok((card.to_string(), questions))
 }
 
 async fn create_review_card(client: &mut Anthropic, topic: &str) -> Result<String, AIError> {
     let prompt = create_prompt(topic);
-    println!("Prompt\n\n{}", prompt);
-    println!();
-    println!();
-    println!();
     client.push_message(Role::User, prompt);
     if let Ok(response) = client.send_message().await {
         Ok(response)
@@ -75,21 +67,21 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Result<Vec<Questio
     client.push_message(Role::Assistant, "The json is: [".into());
 
     match client.send_message().await {
-        Ok(response) => Ok(handle_response(response)),
+        Ok(response) => handle_response(response),
         Err(_) => Err(AIError::AnthropicMessageFailed),
     }
 }
 
-fn handle_response(json: String) -> Vec<Question> {
+fn handle_response(json: String) -> Result<Vec<Question>, AIError> {
     // The Anthropic API will truncate the first [, we need
     // to add it manually. See Anthropic documentation for JSON
     let json = format!("[{json}");
 
-    println!("Questions:\n\n {}", json);
     if let Ok(parsed_questions) = serde_json::from_str::<Vec<ParsedQuestion>>(&json) {
-        return create_questions_from_parsed(parsed_questions);
+        return Ok(create_questions_from_parsed(parsed_questions))
     }
     println!("\x1b[31mError: Could not parse JSON response\x1b[0m");
+    Err(AIError::QuestionParsingFailed)
 }
 
 fn create_questions_from_parsed(parsed_questions: Vec<ParsedQuestion>) -> Vec<Question> {

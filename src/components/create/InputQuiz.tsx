@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import EditableOption from './EditableOption';
 
-export default function InputQuiz({ question, options, updateQuiz, id }) {
+export default function InputQuiz({ question, options, updateQuiz, deleteQuestion, id }) {
   let options_component = options.map((option) => {
     return (
       <EditableOption
@@ -9,6 +9,7 @@ export default function InputQuiz({ question, options, updateQuiz, id }) {
         answer={option.answer}
         id={option.id}
         editOption={editOption}
+        deleteOption={deleteOption}
       />
     );
   });
@@ -20,7 +21,7 @@ export default function InputQuiz({ question, options, updateQuiz, id }) {
 
   function editOption(optionId, newAnswer) {
     const newOptions = options.map((option) => {
-      if (option.id === optionId) {
+      if (option.id == optionId) {
         return { ...option, answer: newAnswer };
       }
       return option;
@@ -28,9 +29,19 @@ export default function InputQuiz({ question, options, updateQuiz, id }) {
     updateQuiz(id, question, newOptions);
   }
 
+  function deleteOption(optionId) {
+    const newOptions = options.filter((option) => option.id != optionId);
+    updateQuiz(id, question, newOptions);
+  }
+
   return (
     <Wrapper>
       <QuestionWrapper>
+        <button 
+          onClick={() => deleteQuestion(id)}
+          >
+            X
+          </button>
         <Label>Question</Label>
         <QuestionInput value={question} onChange={editQuestion} />
       </QuestionWrapper>
