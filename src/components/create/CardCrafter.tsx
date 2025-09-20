@@ -25,22 +25,17 @@ export default function CardCrafter() {
 
   function onPromptSubmit(event: React.ChangeEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter') {
-      promptAi();
+      try {
+        promptAi();
+      } catch (error) {
+        console.log(error);
+        setError("There was a problem with the Anthropic API. Retry later");
+      }
     }
   }
 
   function updatePrompt(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setTopic(e.target.value);
-  }
-
-  function updateQuiz(id, newQuestion, options) {
-    const newQuestions = questions.map((question) => {
-      if (question.id == id) {
-        return { ...question, question: newQuestion, options };
-      }
-      return question;
-    });
-    setQuestions(newQuestions);
   }
 
   async function persistData() {
@@ -71,7 +66,7 @@ export default function CardCrafter() {
                 content={content}
                 setContent={setContent}
                 questions={questions}
-                updateQuiz={updateQuiz}
+                setQuestions={setQuestions}
               />
               : <ErrorMessage>{error}</ErrorMessage>
           }

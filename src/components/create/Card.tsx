@@ -3,15 +3,17 @@ import CardContentEditor from './CardContentEditor';
 
 import styled from '@emotion/styled';
 
-export default function Card({ content, setContent, questions, updateQuiz }) {
+export default function Card({ content, setContent, questions, setQuestions }) {
   return (
     <>
       <Result>
         <CardContentEditor content={content} setContent={setContent} />
       </Result>
       {questions ? (
-        <EditableQuizs questions={questions} updateQuiz={updateQuiz} />
-      ) : (
+        <EditableQuizs
+          questions={questions}
+          setQuestions={setQuestions} />
+        ) : (
         ''
       )}
     </>
