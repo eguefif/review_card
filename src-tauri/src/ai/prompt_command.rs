@@ -103,10 +103,10 @@ fn handle_response(json: String) -> Result<Vec<Question>, AIError> {
     Err(AIError::QuestionParsingFailed)
 }
 
-/// Converts raw parsed questions into domain objects with unique identifiers.
+/// Converts raw parsed questions into domain objects with identifiers.
 ///
 /// This function transforms `ParsedQuestion` objects (deserialized from JSON) into
-/// `Question` domain objects, assigning each question a unique sequential ID based
+/// `Question` domain objects, assigning each question an ID based
 /// on its position in the input vector.
 ///
 /// # Arguments
