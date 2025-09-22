@@ -5,24 +5,70 @@ use reqwest;
 use crate::ai::ai_error::AIError;
 use crate::ai::mock_data::{MOCKED_CARD, mocked_questions};
 use crate::ai::anthropic::{Anthropic, Role};
+use crate::ai::prompts::{build_review_card_prompt, build_mcq_prompt};
 use crate::card::question::{ParsedQuestion, Question};
 
+/// Generates an AI-powered review card and multiple choice questions for a given topic.
+///
+/// # Arguments
+///
+/// * `topic` - A string containing the subject matter for which to generate the review card
+///   and questions. This can be any educational topic, concept, or subject area.
+///
+/// # Returns
+///
+/// Returns a `Result` containing:
+/// * `Ok((String, Vec<Question>))` - A tuple where:
+///   - The first element is the generated review card as a formatted text string
+///   - The second element is a vector of `Question` objects containing multiple choice questions
+/// * `Err(AIError)` - An error if any step in the process fails
+///
+/// # Side Effects
+///
+/// This function makes two sequential HTTP requests to the Anthropic Claude API:
+/// 1. **Review Card Generation**: Sends a prompt requesting a structured review card for the topic
+/// 2. **Question Generation**: Sends the generated review card with a request to create MCQ questions
+///
+/// Each API call consumes tokens from the Anthropic API quota and may take several seconds to complete.
+/// The function requires the `ANTHROPIC_API_KEY` environment variable to be set.
+///
+/// # Error Handling
+///
+/// The function can return `AIError` in the following scenarios:
+/// * `AIError::AnthropicMessageFailed` - When either API call to Anthropic fails due to network
+///   issues, authentication problems, or API service unavailability
+/// * `AIError::QuestionParsingFailed` - When the JSON response from the question generation API
+///   cannot be parsed into valid `Question` objects
+/// * Panics if `ANTHROPIC_API_KEY` environment variable is not set
+///
+/// # Example
+///
+/// ```rust
+/// let result = prompt("photosynthesis".to_string()).await;
+/// match result {
+///     Ok((review_card, questions)) => {
+///         println!("Review card: {}", review_card);
+///         println!("Generated {} questions", questions.len());
+///     }
+///     Err(e) => eprintln!("Failed to generate content: {:?}", e),
+/// }
+/// ```
 #[tauri::command]
 pub async fn prompt(topic: String) -> Result<(String, Vec<Question>), AIError> {
-    //std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
-    //let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
-    //let card = create_review_card(&mut client, &topic).await?;
+    std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
+    let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
+    let card = create_review_card(&mut client, &topic).await?;
 
-    //let questions = get_questions(&mut client, &card).await?;
+    let questions = get_questions(&mut client, &card).await?;
 
-    let questions = mocked_questions();
-    let card = MOCKED_CARD.to_string();
+    //let questions = mocked_questions();
+    //let card = MOCKED_CARD.to_string();
 
     Ok((card.to_string(), questions))
 }
 
 async fn create_review_card(client: &mut Anthropic, topic: &str) -> Result<String, AIError> {
-    let prompt = create_prompt(topic);
+    let prompt = build_review_card_prompt(topic);
     client.push_message(Role::User, prompt);
     if let Ok(response) = client.send_message().await {
         Ok(response)
@@ -31,37 +77,9 @@ async fn create_review_card(client: &mut Anthropic, topic: &str) -> Result<Strin
     }
 }
 
-fn create_prompt(topic: &str) -> String {
-    format!(
-        "I want you to create a review card. This review card should only be text and separate in meaningfull sections. Can you create a review card for the following topic?\n\n{}",
-        topic
-    )
-}
 
 async fn get_questions(client: &mut Anthropic, card: &str) -> Result<Vec<Question>, AIError> {
-    let example = r#"
-        [
-            {
-                "question": "What is France's capital city",
-                "options": ["Paris", "Lyon", "Marseille"]
-            },
-            {
-                "question": "What is the baby of the bear",
-                "options": ["Kitty", "Cub", "Lion"]
-            }
-        ]
-    "#;
-
-    let format = r#"
-        [
-            { 
-                "question": "string", 
-                "options": ["string"]
-            }
-        ]
-    "#;
-
-    let prompt = format!("Based on the following review card, can you generate a few questions and answers for a MCQ quiz? You MUST return ONLY a JSON array with no wrapper object.\n\nReview card: {}\n\nRequired JSON format: {}\n\nExample output: {}\n\nIMPORTANT: Return ONLY the JSON array, not wrapped in any object like {{\"quizQuestions\": ...}}.", card, format, example);
+    let prompt = build_mcq_prompt(card);
 
     client.push_message(Role::User, prompt);
     client.push_message(Role::Assistant, "The json is: [".into());
@@ -74,17 +92,38 @@ async fn get_questions(client: &mut Anthropic, card: &str) -> Result<Vec<Questio
 
 fn handle_response(json: String) -> Result<Vec<Question>, AIError> {
     // The Anthropic API will truncate the first [, we need
-    // to add it manually. See Anthropic documentation for JSON
+    // to add it manually for Serde to deserialize it.
+    // See Anthropic documentation for JSON
     let json = format!("[{json}");
 
     if let Ok(parsed_questions) = serde_json::from_str::<Vec<ParsedQuestion>>(&json) {
-        return Ok(create_questions_from_parsed(parsed_questions))
+        return Ok(create_questions_from_parsed_data(parsed_questions))
     }
     println!("\x1b[31mError: Could not parse JSON response\x1b[0m");
     Err(AIError::QuestionParsingFailed)
 }
 
-fn create_questions_from_parsed(parsed_questions: Vec<ParsedQuestion>) -> Vec<Question> {
+/// Converts raw parsed questions into domain objects with unique identifiers.
+///
+/// This function transforms `ParsedQuestion` objects (deserialized from JSON) into
+/// `Question` domain objects, assigning each question a unique sequential ID based
+/// on its position in the input vector.
+///
+/// # Arguments
+///
+/// * `parsed_questions` - A vector of `ParsedQuestion` objects containing the raw
+///   question data and answer options from the AI response
+///
+/// # Returns
+///
+/// A vector of `Question` objects, each assigned a unique ID starting from 0
+///
+/// # Why This Function Exists
+///
+/// The AI API returns unstructured question data without identifiers. This function
+/// adds the necessary IDs that the application requires for question tracking,
+/// user interaction, and state management throughout the quiz interface.
+fn create_questions_from_parsed_data(parsed_questions: Vec<ParsedQuestion>) -> Vec<Question> {
     let mut questions: Vec<Question> = vec![];
     for (i, parsed_question) in parsed_questions.into_iter().enumerate() {
         let question = Question::new(parsed_question, i);
