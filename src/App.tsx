@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import { invoke } from '@tauri-apps/api/core';
-import './App.css';
-
-import CardCrafter from './components/create/CardCrafter';
+import Index from './components/Index';
+import GlobalStyle from './GlobalStyle'
 
 function App() {
-  return <CardCrafter />;
+  return (
+    <>
+      <GlobalStyle />
+      <Index />
+    </>
+  );
 }
 
 export default App;
