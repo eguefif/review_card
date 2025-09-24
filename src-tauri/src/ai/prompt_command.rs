@@ -25,20 +25,9 @@ use crate::card::question::{ParsedQuestion, Question};
 ///
 /// # Side Effects
 ///
-/// This function makes two sequential HTTP requests to the Anthropic Claude API:
-/// 1. **Review Card Generation**: Sends a prompt requesting a structured review card for the topic
-/// 2. **Question Generation**: Sends the generated review card with a request to create MCQ questions
+/// This function makes two sequential HTTP requests to the Anthropic Claude API.
 ///
-/// Each API call consumes tokens from the Anthropic API quota and may take several seconds to complete.
-/// The function requires the `ANTHROPIC_API_KEY` environment variable to be set.
-///
-/// # Error Handling
-///
-/// The function can return `AIError` in the following scenarios:
-/// * `AIError::AnthropicMessageFailed` - When either API call to Anthropic fails due to network
-///   issues, authentication problems, or API service unavailability
-/// * `AIError::QuestionParsingFailed` - When the JSON response from the question generation API
-///   cannot be parsed into valid `Question` objects
+/// for detailed error descriptions.
 /// * Panics if `ANTHROPIC_API_KEY` environment variable is not set
 ///
 /// # Example
@@ -56,13 +45,13 @@ use crate::card::question::{ParsedQuestion, Question};
 #[tauri::command]
 pub async fn prompt(topic: String) -> Result<(String, Vec<Question>), AIError> {
     std::env::var("ANTHROPIC_API_KEY").expect("ANTHROPIC_API_KEY must be set");
-    let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
-    let card = create_review_card(&mut client, &topic).await?;
+    //let mut client = Anthropic::new("claude-3-5-haiku-latest".into(), 1000);
+    //let card = create_review_card(&mut client, &topic).await?;
 
-    let questions = get_questions(&mut client, &card).await?;
+    //let questions = get_questions(&mut client, &card).await?;
 
-    //let questions = mocked_questions();
-    //let card = MOCKED_CARD.to_string();
+    let questions = mocked_questions();
+    let card = MOCKED_CARD.to_string();
 
     Ok((card.to_string(), questions))
 }

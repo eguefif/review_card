@@ -5,6 +5,7 @@ import { Card as CardType, Quiz } from '../../types/card';
 
 import Card from './card/Card';
 import Prompt from './prompt/Prompt';
+import { H1 } from '@reusables/Titles.tsx';
 
 export default function CardCrafter() {
   const [error, setError] = useState('');
@@ -41,13 +42,12 @@ export default function CardCrafter() {
 
   async function persistData() {
     console.log('saving...');
-    const card: CardType = { content, questions: quiz };
-    let result = await invoke('save_card', { card });
+    let result = await invoke('save_card', { content: content, questions: quiz });
   }
 
   return (
     <Wrapper>
-      <h1>Create Your Review Card</h1>
+      <H1>Create Your Review Card</H1>
 
       <ContentWrapper>
         <PromptWrapper>

@@ -44,6 +44,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             ai::prompt_command::prompt,
             card::commands::save_card,
+            card::commands::get_all_cards,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
