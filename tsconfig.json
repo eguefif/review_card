@@ -17,11 +17,9 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@reusables/*": ["src/components/reusables/*"]
-    },
-    "baseUrl": ".",
-    "paths": {
-      "@types/*": ["src/types/*"]
+      "@reusables/*": ["src/components/reusables/*"],
+      "@types/*": ["src/types/*"],
+      "@dataStore/*": ["src/dataStore/*"]
     },
     /* Linting */
     "strict": true,

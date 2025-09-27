@@ -36,6 +36,7 @@ export default function GlobalStyle() {
 
         body {
           background-color: hsl(289 3.2% 9.2%);
+          color: hsl(289 7.9% 88.4%);
         }
 
       `}

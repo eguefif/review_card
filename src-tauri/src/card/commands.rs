@@ -12,7 +12,7 @@ pub async fn save_card(
     app: AppHandle,
     state: State<'_, Mutex<AppData>>,
     content: String,
-    questions: Vec<Question>
+    questions: Vec<Question>,
 ) -> Result<(), String> {
     println!("In save_card");
     if let Ok(mut state) = state.lock() {
@@ -42,10 +42,16 @@ pub async fn save_card(
 }
 
 #[tauri::command]
-pub async fn get_all_cards(app: AppHandle, offset: usize, limit: usize) -> Result<Vec<Card>, String> {
+pub async fn get_all_cards(
+    app: AppHandle,
+    offset: usize,
+    limit: usize,
+) -> Result<Vec<Card>, String> {
     let mut all_cards: Vec<Card> = vec![];
 
-    let store = app.store(STORE_NAME).map_err(|e| format!("Failed to get store: {}", e))?;
+    let store = app
+        .store(STORE_NAME)
+        .map_err(|e| format!("Failed to get store: {}", e))?;
 
     for value_card in store.values().iter() {
         if let Ok(card) = serde_json::from_value::<Card>(value_card.clone()) {

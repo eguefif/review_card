@@ -9,7 +9,10 @@ impl Question {
     pub fn new(parsed_question: ParsedQuestion, id: usize) -> Self {
         let mut options: Vec<Option> = vec![];
         for (i, string_option) in parsed_question.options.into_iter().enumerate() {
-            let option = Option { id: i, answer: string_option };
+            let option = Option {
+                id: i,
+                answer: string_option,
+            };
             options.push(option);
         }
         Self {
@@ -37,4 +40,3 @@ impl ParsedQuestion {
         return Self { question, options };
     }
 }
-

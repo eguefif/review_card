@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused)]
-use serde::{Deserialize, Serialize};
-use crate::ai::anthropic_message::{MessageContent, Message};
+use crate::ai::anthropic_message::{Message, MessageContent};
 use crate::ai::anthropic_response::Response;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Role {
@@ -58,4 +58,3 @@ impl Anthropic {
             .clone())
     }
 }
-

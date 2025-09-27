@@ -1,26 +1,29 @@
 import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { invoke } from '@tauri-apps/api/core';
-import { Card as CardType, Quiz } from '../../types/card';
 
+import { Card as CardType, Quiz } from '../../types/card';
 import Card from './card/Card';
 import Prompt from './prompt/Prompt';
 import { H1 } from '@reusables/Titles.tsx';
+import { useAddCard } from '@dataStore/useDataStore';
 
 export default function CardCrafter() {
-  const [error, setError] = useState('');
+  const [errorMessage, setError] = useState('');
   const [content, setContent] = useState('');
   const [prompt, setPrompt] = useState('');
   const [topic, setTopic] = useState('');
   const [quiz, setQuiz] = useState<Quiz>([]);
+
+  const { addCard, error } = useAddCard();
 
   async function promptAi() {
     try {
       const [result, quiz] = await invoke('prompt', { topic: topic });
       setContent(result);
       setQuiz(quiz);
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
       setError("There was a problem with the Anthropic API. Retry later");
     }
   }
@@ -29,8 +32,8 @@ export default function CardCrafter() {
     if (event.key === 'Enter') {
       try {
         promptAi();
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        console.log(e);
         setError("There was a problem with the Anthropic API. Retry later");
       }
     }
@@ -42,7 +45,19 @@ export default function CardCrafter() {
 
   async function persistData() {
     console.log('saving...');
-    let result = await invoke('save_card', { content: content, questions: quiz });
+    // Split the content into title and body
+    // using the first return to line
+    const splitCharIndex = content.indexOf('\n');
+    const title = content.substring(0, splitCharIndex);
+    const body = content.substring(splitCharIndex + 1, content.length);
+
+    const serializedQuiz = JSON.stringify(quiz);
+
+    console.log('title: ', title)
+    console.log('content: ', body)
+    console.log('quiz: ', serializedQuiz)
+    await addCard({ title, content, quiz: serializedQuiz });
+    //let result = await invoke('save_card', { content: content, questions: quiz });
   }
 
   return (
@@ -61,14 +76,14 @@ export default function CardCrafter() {
 
         <CardWrapper>
           {
-            error.length === 0
+            errorMessage.length === 0
               ? <Card
                 content={content}
                 setContent={setContent}
                 quiz={quiz}
                 setQuiz={setQuiz}
               />
-              : <ErrorMessage>{error}</ErrorMessage>
+              : <ErrorMessage>{errorMessage}</ErrorMessage>
           }
         </CardWrapper>
       </ContentWrapper>

@@ -1,13 +1,14 @@
 import { type Card } from '@types/Card';
+import { getAllCards } from '@dataStore/useDataStore';
 
 export function CardsList({ cards } : { cards: Card[] }) {
-  if (!cards || cards?.length() === 0) {
+  console.log('In cardslist: ', cards);
+  if (!cards || cards?.length === 0) {
     return '';
   }
 
   const cardsList = cards.map((card: Card) => {
-    const title = card.content.split('\n');
-    return <li>{title}</li>;
+    return <li>{card.title}</li>;
   });
 
   return (

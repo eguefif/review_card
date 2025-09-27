@@ -12,7 +12,7 @@ impl Card {
         Self {
             id,
             content,
-            questions
+            questions,
         }
     }
 }

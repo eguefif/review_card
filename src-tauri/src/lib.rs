@@ -1,14 +1,19 @@
 mod ai;
 mod app_data;
 mod card;
+mod data;
 
-use dotenv::dotenv;
+use crate::data::migrations::get_migrations;
 use crate::app_data::AppData;
+use dotenv::dotenv;
 use std::sync::Mutex;
 use tauri::Manager;
 use tauri_plugin_store::StoreExt;
+use tauri_plugin_sql::Builder;
 
 const STORE_NAME: &str = "cards.json";
+// Dependencies: This db name is also hard-written in tauri.conf.json
+const DB_NAME: &str = "sqlite:cardreview.db"; 
 
 fn get_next_card_id(keys: Vec<String>) -> u64 {
     let mut highest_id = 0;
@@ -30,7 +35,14 @@ fn get_next_card_id(keys: Vec<String>) -> u64 {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let migrations = get_migrations();
+
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_sql::Builder::default()
+            .add_migrations(DB_NAME, migrations)
+            .build()
+        )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {

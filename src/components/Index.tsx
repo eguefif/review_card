@@ -67,4 +67,6 @@ const Button = styled.button`
         }
 `;
 
-const MainView = styled.div``;
+const MainView = styled.div`
+  width: 100%;
+`;

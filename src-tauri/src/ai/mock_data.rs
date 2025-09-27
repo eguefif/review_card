@@ -1,4 +1,4 @@
-use crate::card::question::{Question, ParsedQuestion};
+use crate::card::question::{ParsedQuestion, Question};
 
 pub const MOCKED_CARD: &str = r#"
 # Css layout algorithm
@@ -11,7 +11,6 @@ There are five algorithms:
 
 They all serves different purpose depending on the goal.
 "#;
-
 
 pub fn mocked_questions() -> Vec<Question> {
     let mocked_questions: Vec<Question> = vec![
@@ -30,9 +29,9 @@ pub fn mocked_questions() -> Vec<Question> {
             ParsedQuestion::new(
                 "What is the weather".to_string(),
                 vec![
-                        "Cloudy".to_string(),
-                        "Rainny".to_string(),
-                        "Sunny".to_string(),
+                    "Cloudy".to_string(),
+                    "Rainny".to_string(),
+                    "Sunny".to_string(),
                 ],
             ),
             2,

@@ -12,6 +12,8 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       '@reusables': path.resolve(__dirname, './src/components/reusables'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@dataStore': path.resolve(__dirname, './src/dataStore'),
     },
   },
 
